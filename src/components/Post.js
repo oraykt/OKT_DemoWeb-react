@@ -1,28 +1,21 @@
 import React, { Component } from 'react';
-import Axios from 'axios';
-
+import { connect } from 'react-redux';
+import { deletePost } from '../actions/deleteAction';
 
 class Post extends Component {
 
-    state = {
-        data: null
+    handleClick = () => {
+        //console.log(this.props);
+        this.props.PostSil(this.props.data.id);
+        this.props.history.push('/')
     }
 
-    componentDidMount() {
-        //console.log(this.props);
-        let id = this.props.match.params.postId;
-        Axios.get("https://jsonplaceholder.typicode.com/posts/" + id)
-            .then(res => {
-                this.setState({
-                    data: res.data
-                });
-            });
-    }
     render() {
-        const post = this.state.data ? (
+        const post = this.props.data ? (
             <div>
-                <h4 className="center">{this.state.data.title}</h4>
-                <p className="center">{this.state.data.body}</p>
+                <h4 className="center">{this.props.data.title}</h4>
+                <p className="center">{this.props.data.body}</p>
+                <button className="btn grey" onClick={this.handleClick}>Sil</button>
             </div>
         ) : (
                 <div className="center"> Veriler Yukleniyor...</div>
@@ -35,4 +28,18 @@ class Post extends Component {
     }
 }
 
-export default Post;
+const mapStateToProps = (state, selfProps) => {
+    let id = selfProps.match.params.postId;
+    return {
+        data: state.posts.find(post => post.id == id)
+    }
+}
+
+const mapDispatchToProps = (dispatch) => {
+    return {
+        PostSil: (id) => {
+            dispatch(deletePost)
+        }
+    }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(Post);

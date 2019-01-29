@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import Resim from '../favicon.ico'
+import { connect } from 'react-redux';
+
+
 class Anasayfa extends Component {
     state = {
         posts: []
@@ -10,13 +13,13 @@ class Anasayfa extends Component {
         axios.get('https://jsonplaceholder.typicode.com/posts')
             .then(res => {
                 this.setState({
-                    posts: res.data.slice(0, 4)
+                    posts: res.data.slice(0, 8)
                 })
             });
     }
 
     render() {
-        const { posts } = this.state;
+        const { posts } = this.props;
         const postListesi = posts.length ? (
             posts.map(post => {
                 return (
@@ -36,10 +39,17 @@ class Anasayfa extends Component {
             );
         return (
             <div className="container" >
+                <div className="center"><h4>First 8 Data from store</h4></div>
                 {postListesi}
             </div>
         )
     }
 }
 
-export default Anasayfa;
+const mapStateToProps = (state) => {
+    return {
+        posts: state.posts
+    }
+}
+
+export default connect(mapStateToProps)(Anasayfa);
